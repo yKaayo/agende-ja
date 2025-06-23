@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
 import { registerUser } from "../lib/api.js";
+
+// Boostrap
 import Modal from "bootstrap/js/dist/modal";
 
 const Register = () => {
@@ -25,12 +27,12 @@ const Register = () => {
     }
 
     try {
-      console.log(formData);
-      await registerUser(formData);
+      const { passwordConfirm, ...userData } = formData;
+      const data = await registerUser(userData);
+      alert(data?.message);
 
       if (modalRef) {
         const modal = modalRef.current!;
-
         const modalInstance = Modal.getInstance(modal) || new Modal(modal);
 
         modal.addEventListener(
@@ -53,19 +55,20 @@ const Register = () => {
       });
     } catch (err) {
       console.error(err);
+      throw err;
     }
   };
 
   return (
     <div
-      className="modal fade"
+      className="modal fade "
       id="registerModal"
       tabIndex={-1}
       aria-labelledby="registerModalLabel"
       aria-hidden="true"
       ref={modalRef}
     >
-      <div className="modal-dialog">
+      <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
             <h2 className="modal-title">Cadastrar</h2>

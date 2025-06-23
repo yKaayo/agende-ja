@@ -12,6 +12,7 @@ const RegisterModel = mongoose.model("Register", RegisterSchema);
 class Register {
   constructor(body) {
     this.body = body;
+    this.user = null;
   }
 
   cleanUp() {
@@ -40,7 +41,18 @@ class Register {
       return "Senha deve ter no mínimo 1 caractér e no máximo 8 caractéres";
     }
 
-    return "Usuário válido";
+    return true;
+  }
+
+  async register(rep) {
+    const validateUser = this.validate();
+    if (validateUser !== true) return rep.status(400).send({ error: validateUser });
+
+    try {
+      this.user = await RegisterModel.create(this.body);
+    } catch (err) {
+      console.error(err);
+    }
   }
 }
 

@@ -13,13 +13,10 @@ import Register from "../models/RegisterModel.js";
 export const createUser = (req, rep) => {
   const user = new Register(req.body);
   console.log(user.body);
-  const validation = user.validate();
 
-  if (validation !== "Usuário válido") {
-    return rep.status(400).send({ error: validation });
-  }
+  user.register(rep);
 
-  return rep.status(201).send({ message: validation });
+  return rep.status(201).send({ message: "Usuário cadastrado com sucesso!" });
 };
 
 export const loginUser = (req, rep) => {

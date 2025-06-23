@@ -11,7 +11,7 @@ const Login = () => {
       aria-labelledby="loginModalLabel"
       aria-hidden="true"
     >
-      <div className="modal-dialog">
+      <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
             <h2 className="modal-title">Entrar</h2>
