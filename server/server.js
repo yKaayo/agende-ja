@@ -5,6 +5,7 @@ import fastifySession from "@fastify/session";
 import fastifyCookie from "@fastify/cookie";
 import MongoStore from "connect-mongo";
 import fastifyHelmet from "@fastify/helmet";
+import cors from '@fastify/cors'
 
 // Routes
 import { auth } from "./routes/authRoutes.js";
@@ -13,6 +14,10 @@ dotenv.config();
 
 const fastify = Fastify({
   logger: true,
+});
+
+await fastify.register(cors, {
+  origin: "*",
 });
 
 mongoose.connect(

@@ -42,6 +42,8 @@ const Login = () => {
                 </label>
                 <input
                   type={showPassword ? "text" : "password"}
+                  max={8}
+                  min={1}
                   className="form-control"
                   id="loginPassword"
                   placeholder="senha123"

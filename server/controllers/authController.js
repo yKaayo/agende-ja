@@ -1,5 +1,6 @@
 // Models
-import ProductModel from "../models/ProductModels.js";
+import Login from "../models/LoginModel.js";
+import Register from "../models/RegisterModel.js";
 
 // ProductModel.create({
 //   name: "Cama",
@@ -9,26 +10,42 @@ import ProductModel from "../models/ProductModels.js";
 //   .then((data) => console.log(data))
 //   .catch((e) => console.log(e));
 
-export const getProducts = (req, rep) => {
-  // req.session.user = { user: "Kaayo", logged: true };
-  console.log(req.session.user);
+export const createUser = (req, rep) => {
+  const user = new Register(req.body);
+  console.log(user.body);
+  const validation = user.validate();
 
-  return rep.send({ message: "Produtos route working!", user: req.session.user });
-};
-
-export const createProducts = (req, rep) => {
-  try {
-    const name = req.body.name;
-
-    rep.status(201).send({
-      success: true,
-      message: `Produto ${name} criado com sucesso`,
-    });
-  } catch (error) {
-    rep.status(500).send({
-      success: false,
-      message: "Erro ao criar produto",
-      error: error.message,
-    });
+  if (validation !== "Usuário válido") {
+    return rep.status(400).send({ error: validation });
   }
+
+  return rep.status(201).send({ message: validation });
 };
+
+export const loginUser = (req, rep) => {
+  return rep.send({});
+};
+
+// export const getProducts = (req, rep) => {
+//   // req.session.user = { user: "Kaayo", logged: true };
+//   console.log(req.session.user);
+
+//   return rep.send({ message: "Produtos route working!", user: req.session.user });
+// };
+
+// export const createProducts = (req, rep) => {
+//   try {
+//     const name = req.body.name;
+
+//     rep.status(201).send({
+//       success: true,
+//       message: `Produto ${name} criado com sucesso`,
+//     });
+//   } catch (error) {
+//     rep.status(500).send({
+//       success: false,
+//       message: "Erro ao criar produto",
+//       error: error.message,
+//     });
+//   }
+// };

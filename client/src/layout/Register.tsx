@@ -1,4 +1,61 @@
+import React, { useRef, useState } from "react";
+import { registerUser } from "../lib/api.js";
+import Modal from "bootstrap/js/dist/modal";
+
 const Register = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+  });
+  const modalRef = useRef(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.passwordConfirm) {
+      alert("As senhas não coincidem!");
+      return;
+    }
+
+    try {
+      console.log(formData);
+      await registerUser(formData);
+
+      if (modalRef) {
+        const modal = modalRef.current!;
+
+        const modalInstance = Modal.getInstance(modal) || new Modal(modal);
+
+        modal.addEventListener(
+          "hidden.bs.modal",
+          () => {
+            document.body.classList.remove("modal-open");
+            const backdrop = document.querySelector(".modal-backdrop");
+            if (backdrop) backdrop.remove();
+          },
+          { once: true }
+        );
+        modalInstance.hide();
+      }
+
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        passwordConfirm: "",
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div
       className="modal fade"
@@ -6,6 +63,7 @@ const Register = () => {
       tabIndex={-1}
       aria-labelledby="registerModalLabel"
       aria-hidden="true"
+      ref={modalRef}
     >
       <div className="modal-dialog">
         <div className="modal-content">
@@ -19,12 +77,19 @@ const Register = () => {
             ></button>
           </div>
           <div className="modal-body">
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label htmlFor="registerName" className="form-label">
                   Digite seu nome:
                 </label>
-                <input type="text" className="form-control" id="registerName" />
+                <input
+                  type="text"
+                  className="form-control"
+                  id="registerName"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
               </div>
 
               <div className="mb-3">
@@ -35,6 +100,10 @@ const Register = () => {
                   type="email"
                   className="form-control"
                   id="registerEmail"
+                  placeholder="email@email.com"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -45,7 +114,12 @@ const Register = () => {
                 <input
                   type="password"
                   className="form-control"
+                  max={8}
+                  min={1}
                   id="registerPassword"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -55,8 +129,13 @@ const Register = () => {
                 </label>
                 <input
                   type="password"
+                  max={8}
+                  min={1}
                   className="form-control"
                   id="registerPasswordAgain"
+                  name="passwordConfirm"
+                  value={formData.passwordConfirm}
+                  onChange={handleChange}
                 />
               </div>
 
