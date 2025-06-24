@@ -1,7 +1,57 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { loginUser } from "../lib/api";
+
+// Boostrap
+import Modal from "bootstrap/js/dist/modal";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const modalRef = useRef(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const data = await loginUser(formData);
+      console.log(data);
+
+      if (data?.error) return alert(data?.error);
+      if (data?.message) alert(data?.message);
+
+      if (modalRef?.current) {
+        const modal = modalRef.current;
+        let modalInstance = Modal.getInstance(modal);
+
+        if (!modalInstance) {
+          modalInstance = new Modal(modal);
+        }
+
+        modal.addEventListener("hidden.bs.modal", () => {
+          const backdrop = document.querySelector(".modal-backdrop");
+          if (backdrop) backdrop.remove();
+        });
+        modalInstance.hide();
+      }
+
+      setFormData({
+        email: "",
+        password: "",
+      });
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
 
   return (
     <div
@@ -10,6 +60,7 @@ const Login = () => {
       tabIndex={-1}
       aria-labelledby="loginModalLabel"
       aria-hidden="true"
+      ref={modalRef}
     >
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
@@ -23,7 +74,7 @@ const Login = () => {
             ></button>
           </div>
           <div className="modal-body">
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label htmlFor="loginEmail" className="form-label">
                   Digite seu email:
@@ -32,7 +83,9 @@ const Login = () => {
                   type="email"
                   className="form-control"
                   id="loginEmail"
+                  name="email"
                   placeholder="email@email.com"
+                  onChange={handleChange}
                 />
               </div>
 
@@ -46,7 +99,9 @@ const Login = () => {
                   min={1}
                   className="form-control"
                   id="loginPassword"
+                  name="password"
                   placeholder="senha123"
+                  onChange={handleChange}
                 />
               </div>
 

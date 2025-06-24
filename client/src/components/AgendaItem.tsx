@@ -9,7 +9,7 @@ const AgendaItem = ({ date }: { date: Date }) => {
   return (
     <div className="my-3">
       <button
-        className="btn btn-primary w-100"
+        className="btn btn-primary w-100 text-start"
         type="button"
         data-bs-toggle="collapse"
         data-bs-target={`#${collapseId}`}

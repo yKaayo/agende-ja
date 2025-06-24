@@ -29,21 +29,23 @@ const Register = () => {
     try {
       const { passwordConfirm, ...userData } = formData;
       const data = await registerUser(userData);
-      alert(data?.message);
+      console.log(data);
 
-      if (modalRef) {
-        const modal = modalRef.current!;
-        const modalInstance = Modal.getInstance(modal) || new Modal(modal);
+      if (data?.error) return alert(data?.error);
+      if (data?.message) alert(data?.message);
 
-        modal.addEventListener(
-          "hidden.bs.modal",
-          () => {
-            document.body.classList.remove("modal-open");
-            const backdrop = document.querySelector(".modal-backdrop");
-            if (backdrop) backdrop.remove();
-          },
-          { once: true }
-        );
+      if (modalRef?.current) {
+        const modal = modalRef.current;
+        let modalInstance = Modal.getInstance(modal);
+
+        if (!modalInstance) {
+          modalInstance = new Modal(modal);
+        }
+
+        modal.addEventListener("hidden.bs.modal", () => {
+          const backdrop = document.querySelector(".modal-backdrop");
+          if (backdrop) backdrop.remove();
+        });
         modalInstance.hide();
       }
 

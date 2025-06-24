@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import bcrypt from "bcrypt";
 
 const RegisterSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -7,7 +8,7 @@ const RegisterSchema = new mongoose.Schema({
   password: { type: String, required: true },
 });
 
-const RegisterModel = mongoose.model("Register", RegisterSchema);
+export const RegisterModel = mongoose.model("User", RegisterSchema);
 
 class Register {
   constructor(body) {
@@ -30,12 +31,15 @@ class Register {
     };
   }
 
-  validate() {
+  async validate() {
     this.cleanUp();
 
-    if (!validator.isEmail(this.body.email)) {
-      return "E-mail inválido";
-    }
+    if (!validator.isEmail(this.body.email)) return "E-mail inválido";
+
+    this.user = await RegisterModel.findOne({ email: this.body.email });
+    console.log(this.user);
+
+    if (this.user) return "Usuário já existe!";
 
     if (this.body.password.length < 1 || this.body.password.length > 8) {
       return "Senha deve ter no mínimo 1 caractér e no máximo 8 caractéres";
@@ -45,11 +49,15 @@ class Register {
   }
 
   async register(rep) {
-    const validateUser = this.validate();
-    if (validateUser !== true) return rep.status(400).send({ error: validateUser });
+    const validateUser = await this.validate();
+    if (validateUser !== true)
+      return rep.status(400).send({ error: validateUser });
+
+    this.body.password = await bcrypt.hash(this.body.password, 10);
 
     try {
       this.user = await RegisterModel.create(this.body);
+      rep.status(201).send({ message: "Usuário cadastrado com sucesso!" });
     } catch (err) {
       console.error(err);
     }

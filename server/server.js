@@ -5,9 +5,10 @@ import fastifySession from "@fastify/session";
 import fastifyCookie from "@fastify/cookie";
 import MongoStore from "connect-mongo";
 import fastifyHelmet from "@fastify/helmet";
-import cors from '@fastify/cors'
+import cors from "@fastify/cors";
 
 // Routes
+import { home } from "./routes/homeRoutes.js";
 import { auth } from "./routes/authRoutes.js";
 
 dotenv.config();
@@ -20,9 +21,12 @@ await fastify.register(cors, {
   origin: "*",
 });
 
-mongoose.connect(
-  `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@cluster.krnbot3.mongodb.net/?retryWrites=true&w=majority&appName=cluster`
-);
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@cluster.krnbot3.mongodb.net/agendeja?retryWrites=true&w=majority&appName=cluster`
+  )
+  .then(() => console.log("Mongoose conectado"))
+  .catch((err) => console.error("Erro ao conectar com o MongoDB:", err));
 
 // Cookie
 fastify.register(fastifyCookie);
@@ -49,6 +53,7 @@ fastify.register(fastifyHelmet, {
 });
 
 // Routes
+fastify.register(home);
 fastify.register(auth, { prefix: "/autenticar" });
 
 fastify.listen({ port: 3000 }, function (err, address) {
