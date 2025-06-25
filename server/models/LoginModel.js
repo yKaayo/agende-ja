@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcrypt";
 
@@ -52,7 +51,8 @@ class Login {
     if (validateUser !== true)
       return rep.status(400).send({ error: validateUser });
 
-    req.session.userId = this.user._id;
+    req.session.userId = this.user._id.toString();
+    req.session.userEmail = this.user.email;
 
     return rep.status(201).send({ message: "Você entrou!" });
   }

@@ -8,17 +8,13 @@ import fastifyHelmet from "@fastify/helmet";
 import cors from "@fastify/cors";
 
 // Routes
-import { home } from "./routes/homeRoutes.js";
 import { auth } from "./routes/authRoutes.js";
+import { agenda } from "./routes/agendaRoutes.js";
 
 dotenv.config();
 
 const fastify = Fastify({
   logger: true,
-});
-
-await fastify.register(cors, {
-  origin: "*",
 });
 
 mongoose
@@ -28,22 +24,35 @@ mongoose
   .then(() => console.log("Mongoose conectado"))
   .catch((err) => console.error("Erro ao conectar com o MongoDB:", err));
 
-// Cookie
-fastify.register(fastifyCookie);
-fastify.register(fastifySession, {
+await fastify.register(cors, {
+  origin: "http://localhost:8080",
+  credentials: true,
+});
+await fastify.register(fastifyCookie, {
+  secret: process.env.COOKIE_SECRET,
+  parseOptions: {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  },
+});
+await fastify.register(fastifySession, {
+  rolling: true,
+  cookieName: 'sessionId',
   secret: process.env.SESSION_SECRET,
   store: MongoStore.create({
-    mongoUrl: `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@cluster.krnbot3.mongodb.net/?retryWrites=true&w=majority&appName=cluster`,
+    mongoUrl: `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@cluster.krnbot3.mongodb.net/session?retryWrites=true&w=majority&appName=cluster`,
+    collectionName: "sessions",
   }),
-  saveUninitialized: false,
-  resave: false,
   rolling: false,
   cookie: {
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    sameSite: "strict",
+    sameSite: "lax",
     secure: false,
   },
+  saveUninitialized: false,
+  resave: false,
 });
 
 // Security
@@ -53,8 +62,8 @@ fastify.register(fastifyHelmet, {
 });
 
 // Routes
-fastify.register(home);
 fastify.register(auth, { prefix: "/autenticar" });
+fastify.register(agenda, { prefix: "/agenda" });
 
 fastify.listen({ port: 3000 }, function (err, address) {
   if (err) {

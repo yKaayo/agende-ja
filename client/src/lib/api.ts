@@ -11,11 +11,10 @@ interface LoginData {
   password: string;
 }
 
-const url = "http://127.0.0.1:3000";
+const url = "http://localhost:3000";
 
 export const verifyLogged = async () => {
-  const res = await axios.get(url + "/home");
-  console.log(res);
+  const res = await axios.get(url + "/autenticar/", { withCredentials: true });
 
   return res.data;
 };
@@ -31,10 +30,10 @@ export const registerUser = async (data: RegisterData) => {
 };
 
 export const loginUser = async (data: LoginData) => {
-  console.log(data);
-
   try {
-    const res = await axios.post(`${url}/autenticar/entrar`, data);
+    const res = await axios.post(`${url}/autenticar/entrar`, data, {
+      withCredentials: true,
+    });
     return res.data;
   } catch (err) {
     console.error("Erro ao entrar:", err);

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { loginUser } from "../lib/api";
+import { loginUser, verifyLogged } from "../lib/api";
 
 // Boostrap
 import Modal from "bootstrap/js/dist/modal";
@@ -23,10 +23,12 @@ const Login = () => {
 
     try {
       const data = await loginUser(formData);
-      console.log(data);
 
       if (data?.error) return alert(data?.error);
       if (data?.message) alert(data?.message);
+
+      const data1 = await verifyLogged()
+      alert(data1)
 
       if (modalRef?.current) {
         const modal = modalRef.current;
