@@ -24,22 +24,37 @@ class Login {
     };
   }
 
-  async validate() {
+  async validate(rep) {
     this.cleanUp();
 
-    if (!validator.isEmail(this.body.email)) return "E-mail inválido";
+    if (!validator.isEmail(this.body.email))
+      return rep.status(400).send({ error: "E-mail inválido" });
 
-    this.user = await RegisterModel.findOne({ email: this.body.email });
-    if (!this.user) return "Usuário não existe!";
+    try {
+      this.user = await RegisterModel.findOne({ email: this.body.email });
+      if (!this.user)
+        return rep.status(404).send({ error: "Usuário não existe!" });
+    } catch (err) {
+      throw new Error("Erro ao buscar dados do usuário!", 400);
+    }
 
     if (this.body.password.length < 1 || this.body.password.length > 8)
-      return "Senha deve ter no mínimo 1 caractér e no máximo 8 caractéres";
+      return rep.status(400).send({
+        error: "Senha deve ter no mínimo 1 caractér e no máximo 8 caractéres",
+      });
 
-    const passwords = await bcrypt.compare(
-      this.body.password,
-      this.user.password
-    );
-    if (!passwords) return "Senha Incorreta!";
+    try {
+      const passwords = await bcrypt.compare(
+        this.body.password,
+        this.user.password
+      );
+      if (!passwords)
+        return rep.status(401).send({
+          error: "Senha Incorreta!",
+        });
+    } catch (err) {
+      throw new Error("Erro ao acessar a conta!", 500);
+    }
 
     return true;
   }
@@ -47,9 +62,13 @@ class Login {
   async login(req, rep) {
     this.cleanUp();
 
-    const validateUser = await this.validate();
-    if (validateUser !== true)
-      return rep.status(400).send({ error: validateUser });
+    try {
+      const validateUser = await this.validate(rep);
+      if (validateUser !== true)
+        return rep.status(400).send({ error: validateUser });
+    } catch (err) {
+      throw err;
+    }
 
     req.session.userId = this.user._id.toString();
     req.session.userEmail = this.user.email;

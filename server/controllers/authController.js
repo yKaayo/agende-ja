@@ -28,7 +28,6 @@ export const verifyLogged = async (req, rep) => {
 
 export const createUser = (req, rep) => {
   const user = new Register(req.body);
-  console.log(user.body);
 
   return user.register(rep);
 };

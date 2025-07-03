@@ -1,3 +1,3 @@
-export const scheduleTime = () => {
+export const scheduleTime = (req, rep) => {
   return;
 };

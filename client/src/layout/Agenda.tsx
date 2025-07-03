@@ -1,10 +1,19 @@
 import { useState } from "react";
+
+// Components
 import AgendaItem from "../components/AgendaItem";
+import AgendaItemModal from "../components/AgendaItemModal";
 
 // Icon
 import arrowIcon from "../assets/icons/arrow.svg";
 
 const Agenda = () => {
+  const [modalData, setModalData] = useState<{
+    date: Date | null;
+    hour: string | null;
+  }>({ date: null, hour: null });
+  const [showModal, setShowModal] = useState(false);
+
   const allDays = generateDaysOfYear();
   const [currentWeek, setCurrentWeek] = useState(0);
 
@@ -12,6 +21,19 @@ const Agenda = () => {
   const start = currentWeek * daysPerWeek;
   const end = start + daysPerWeek;
   const currentDays = allDays.slice(start, end);
+
+  const schedules = [
+    "08:00",
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+  ];
 
   function generateDaysOfYear(year = new Date().getFullYear()) {
     const days = [];
@@ -31,35 +53,53 @@ const Agenda = () => {
   }
 
   return (
-    <section className="container mb-3">
-      {currentDays.map((date) => (
-        <AgendaItem key={date.toISOString()} date={date} />
-      ))}
-
-      <div className="d-flex justify-content-between mt-3">
-        <button
-          className="btn btn-secondary d-flex align-items-center gap-2"
-          onClick={() => setCurrentWeek((w) => Math.max(w - 1, 0))}
-          disabled={currentWeek === 0}
-        >
-          <img src={arrowIcon} style={{ height: 24 }} alt="Anterior" />
-          <p className="text-nowrap mb-0">Semana anterior</p>
-        </button>
-
-        <button
-          className="btn btn-secondary d-flex align-items-center gap-2"
-          onClick={() => setCurrentWeek((w) => w + 1)}
-          disabled={end >= allDays.length}
-        >
-          <p className="text-nowrap mb-0">Próxima semana</p>
-          <img
-            style={{ transform: "rotate(180deg)", height: 24 }}
-            src={arrowIcon}
-            alt="Próximo"
+    <>
+      <section className="container mb-3">
+        {currentDays.map((date) => (
+          <AgendaItem
+            key={date.toISOString()}
+            date={date}
+            schedules={schedules}
+            onHourClick={(hour) => {
+              setModalData({ date, hour });
+              setShowModal(true);
+            }}
           />
-        </button>
-      </div>
-    </section>
+        ))}
+
+        <div className="d-flex justify-content-between mt-3">
+          <button
+            className="btn btn-secondary d-flex align-items-center gap-2"
+            onClick={() => setCurrentWeek((w) => Math.max(w - 1, 0))}
+            disabled={currentWeek === 0}
+          >
+            <img src={arrowIcon} style={{ height: 24 }} alt="Anterior" />
+            <p className="text-nowrap mb-0">Semana anterior</p>
+          </button>
+
+          <button
+            className="btn btn-secondary d-flex align-items-center gap-2"
+            onClick={() => setCurrentWeek((w) => w + 1)}
+            disabled={end >= allDays.length}
+          >
+            <p className="text-nowrap mb-0">Próxima semana</p>
+            <img
+              style={{ transform: "rotate(180deg)", height: 24 }}
+              src={arrowIcon}
+              alt="Próximo"
+            />
+          </button>
+        </div>
+      </section>
+
+      {showModal && modalData.date && modalData.hour && (
+        <AgendaItemModal
+          date={modalData.date}
+          hour={modalData.hour}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { loginUser, verifyLogged } from "../lib/api";
+import { loginUser } from "../lib/api";
 
 // Boostrap
 import Modal from "bootstrap/js/dist/modal";
@@ -27,21 +27,14 @@ const Login = () => {
       if (data?.error) return alert(data?.error);
       if (data?.message) alert(data?.message);
 
-      const data1 = await verifyLogged()
-      alert(data1)
-
       if (modalRef?.current) {
         const modal = modalRef.current;
-        let modalInstance = Modal.getInstance(modal);
+        const modalInstance = Modal.getInstance(modal);
 
-        if (!modalInstance) {
-          modalInstance = new Modal(modal);
-        }
-
-        modal.addEventListener("hidden.bs.modal", () => {
-          const backdrop = document.querySelector(".modal-backdrop");
-          if (backdrop) backdrop.remove();
-        });
+        // modal.addEventListener("hidden.bs.modal", () => {
+        //   const backdrop = document.querySelector(".modal-backdrop");
+        //   if (backdrop) backdrop.remove();
+        // });
         modalInstance.hide();
       }
 

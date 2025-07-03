@@ -31,17 +31,26 @@ class Register {
     };
   }
 
-  async validate() {
+  async validate(rep) {
     this.cleanUp();
 
-    if (!validator.isEmail(this.body.email)) return "E-mail inválido";
+    if (!validator.isEmail(this.body.email))
+      return rep.status(400).send({ error: "E-mail inválido" });
 
-    this.user = await RegisterModel.findOne({ email: this.body.email });
-    console.log(this.user);
+    try {
+      this.user = await RegisterModel.findOne({ email: this.body.email });
+      if (this.user)
+        return rep.status(409).send({ error: "Usuário já existe!" });
+    } catch (err) {
+      throw new Error("Erro ao buscar usuário!");
+    }
 
-    if (this.user) return "Usuário já existe!";
-
-    if (this.body.password.length < 1 || this.body.password.length > 8) {
+    if (
+      !validator.isStrongPassword(this.body.password, {
+        minLength: 1,
+      }) ||
+      this.body.password.length > 8
+    ) {
       return "Senha deve ter no mínimo 1 caractér e no máximo 8 caractéres";
     }
 
@@ -49,17 +58,21 @@ class Register {
   }
 
   async register(rep) {
-    const validateUser = await this.validate();
+    const validateUser = await this.validate(rep);
     if (validateUser !== true)
       return rep.status(400).send({ error: validateUser });
 
-    this.body.password = await bcrypt.hash(this.body.password, 10);
+    try {
+      this.body.password = await bcrypt.hash(this.body.password, 10);
+    } catch (err) {
+      throw new Error("Erro ao criptografar a senha!");
+    }
 
     try {
       this.user = await RegisterModel.create(this.body);
       rep.status(201).send({ message: "Usuário cadastrado com sucesso!" });
     } catch (err) {
-      console.error(err);
+      throw new Error("Erro ao criar usuário!");
     }
   }
 }
