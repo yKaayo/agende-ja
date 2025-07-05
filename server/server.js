@@ -38,7 +38,7 @@ await fastify.register(fastifyCookie, {
 });
 await fastify.register(fastifySession, {
   rolling: true,
-  cookieName: 'sessionId',
+  cookieName: "sessionId",
   secret: process.env.SESSION_SECRET,
   store: MongoStore.create({
     mongoUrl: `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@cluster.krnbot3.mongodb.net/session?retryWrites=true&w=majority&appName=cluster`,

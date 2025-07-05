@@ -4,10 +4,6 @@ import Login from "../models/LoginModel.js";
 import { RegisterModel } from "../models/RegisterModel.js";
 
 export const verifyLogged = async (req, rep) => {
-  if (!req.session.userId) {
-    return rep.status(401).send({ error: "Não autenticado" });
-  }
-
   const user = await RegisterModel.findById(req.session.userId);
   if (!user) {
     req.session.destroy();
@@ -36,4 +32,14 @@ export const loginUser = (req, rep) => {
   const user = new Login(req.body);
 
   return user.login(req, rep);
+};
+
+export const logoutUser = (req, rep) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return rep.status(500).send({ error: "Erro ao encerrar sessão" });
+    }
+
+    return rep.send({ message: "Usuário saiu com sucesso!" });
+  });
 };

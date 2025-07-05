@@ -15,11 +15,11 @@ const AgendaItem = ({ date, schedules, onHourClick }: AgendaItemsProps) => {
   return (
     <div className="card my-3">
       <div className="card-header fw-bold">{formatDate(date)}</div>
-      <div className="card-body d-flex flex-wrap gap-2">
+      <div className="card-body d-flex justify-content-between flex-wrap gap-2">
         {schedules.map((hour: string) => (
           <button
             key={hour}
-            className="btn btn-outline-primary p-2 text-center"
+            className="btn btn-outline-primary py-2 text-center"
             style={{ minWidth: 80 }}
             onClick={() => onHourClick(hour)}
           >

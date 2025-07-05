@@ -14,7 +14,7 @@ interface LoginData {
 const url = "http://localhost:3000";
 
 export const verifyLogged = async () => {
-  const res = await axios.get(url + "/autenticar/", { withCredentials: true });
+  const res = await axios.get(`${url}/autenticar`, { withCredentials: true });
 
   return res.data;
 };
@@ -37,6 +37,19 @@ export const loginUser = async (data: LoginData) => {
     return res.data;
   } catch (err) {
     console.error("Erro ao entrar:", err);
+    return err?.response?.data;
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    const res = await axios.get(`${url}/autenticar/sair`, {
+      withCredentials: true,
+    });
+
+    return res.data;
+  } catch (err) {
+    console.error("Erro ao sair:", err);
     return err?.response?.data;
   }
 };

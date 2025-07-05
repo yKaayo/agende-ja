@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { registerUser } from "../lib/api.js";
 
 // Boostrap
-import Modal from "bootstrap/js/dist/modal";
+import { Modal } from "bootstrap";
 
 const Register = () => {
   const [formData, setFormData] = useState({

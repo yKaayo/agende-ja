@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { loginUser } from "../lib/api";
 
 // Boostrap
-import Modal from "bootstrap/js/dist/modal";
+import { Modal } from "bootstrap";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,10 +31,6 @@ const Login = () => {
         const modal = modalRef.current;
         const modalInstance = Modal.getInstance(modal);
 
-        // modal.addEventListener("hidden.bs.modal", () => {
-        //   const backdrop = document.querySelector(".modal-backdrop");
-        //   if (backdrop) backdrop.remove();
-        // });
         modalInstance.hide();
       }
 
