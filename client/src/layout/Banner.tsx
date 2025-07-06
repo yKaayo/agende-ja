@@ -9,7 +9,7 @@ import Logout from "./Logout";
 import banner from "../assets/images/banner.webp";
 
 // API
-import { verifyLogged } from "../lib/api";
+import { verifyLogged, userAgenda } from "../lib/api";
 
 const Banner = () => {
   const [isLogged, setIsLogged] = useState(false);
@@ -17,17 +17,32 @@ const Banner = () => {
   const verifyUserLogged = async () => {
     try {
       const userStatus = await verifyLogged();
-      return userStatus.authenticated;
+      return userStatus;
     } catch (err) {
       console.error("Erro ao verificar login:", err);
       return false;
     }
   };
 
+  const getUserData = async (email: string) => {
+    try {
+      const userData = await userAgenda(email);
+
+      if (userData) console.log(userData);
+    } catch (err) {
+      console.error("Erro ao obter dados do usuário:", err);
+    }
+  };
+
   useEffect(() => {
     const checkAuthStatus = async () => {
       const status = await verifyUserLogged();
-      setIsLogged(status);
+
+      if (status.authenticated) {
+        await getUserData(status.user.email);
+      }
+
+      setIsLogged(status.authenticated);
     };
 
     checkAuthStatus();

@@ -57,7 +57,7 @@ class Agenda {
       return rep.status(400).send({ error: validateAgendaItem });
 
     try {
-      this.agendaItem = await RegisterModel.create(this.body);
+      this.agendaItem = await AgendaModel.create(this.body);
       rep.status(201).send({
         message: `Horário marcado para o dia ${this.body.date} ás ${this.body.time} horas com sucesso!`,
       });

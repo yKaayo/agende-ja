@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 
+// Type
+import type { Schedule } from "../types/type";
+
 // API
-import { verifyLogged } from "../lib/api";
+import { verifyLogged, createUserSchedule } from "../lib/api";
 
 interface AgendaItemModalProps {
   date: Date;
@@ -11,6 +14,10 @@ interface AgendaItemModalProps {
 
 const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
   const [isLogged, setIsLogged] = useState(false);
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+  });
 
   const formatDate = date.toLocaleDateString("pt-BR", {
     weekday: "short",
@@ -21,10 +28,30 @@ const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
   const verifyUserLogged = async () => {
     try {
       const userStatus = await verifyLogged();
+
+      if (userStatus.authenticated) setUserData(userStatus.user);
+
       return userStatus.authenticated;
     } catch (err) {
       console.error("Erro ao verificar login:", err);
       return false;
+    }
+  };
+
+  const handleCta = async () => {
+    if (isLogged && userData) {
+      const scheduleData: Schedule = {
+        name: userData.name,
+        email: userData.email,
+        date: date.toLocaleDateString("pt-BR"),
+        time: hour,
+      };
+
+      const res = await createUserSchedule(scheduleData);
+      alert(res.message);
+      onClose();
+    } else {
+      alert("Usuário não está logado.");
     }
   };
 
@@ -56,7 +83,7 @@ const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
             <button
               className="btn btn-primary"
               disabled={!isLogged}
-              onClick={onClose}
+              onClick={handleCta}
             >
               Confirmar
             </button>
