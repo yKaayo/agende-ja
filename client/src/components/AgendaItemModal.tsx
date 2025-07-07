@@ -1,12 +1,12 @@
 // Type
-import type { Schedule } from "../types/type";
+import type { User, Schedule } from "../types/type";
 
 // API
 import { createUserSchedule } from "../lib/AgendaApi";
 
 interface AgendaItemModalProps {
   isLogged: boolean;
-  userData: Schedule | null;
+  user: User | null;
   date: Date;
   hour: string;
   onClose: () => void;
@@ -14,11 +14,13 @@ interface AgendaItemModalProps {
 
 const AgendaItemModal = ({
   isLogged,
-  userData,
+  user,
   date,
   hour,
   onClose,
 }: AgendaItemModalProps) => {
+
+  
   const formatDate = date.toLocaleDateString("pt-BR", {
     weekday: "short",
     day: "2-digit",
@@ -26,13 +28,16 @@ const AgendaItemModal = ({
   });
 
   const handleCta = async () => {
-    if (isLogged && userData) {
+    if (isLogged && user) {
       const scheduleData: Schedule = {
-        name: userData.name,
-        email: userData.email,
+        name: user.name,
+        email: user.email,
         date: date.toLocaleDateString("pt-BR"),
         time: hour,
       };
+
+      console.log(scheduleData);
+      
 
       const res = await createUserSchedule(scheduleData);
       alert(res.message);

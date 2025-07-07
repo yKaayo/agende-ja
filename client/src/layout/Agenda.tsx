@@ -8,13 +8,15 @@ import AgendaItemModal from "../components/AgendaItemModal";
 import arrowIcon from "../assets/icons/arrow.svg";
 
 // Type
-import type { UserData } from "../types/type";
+import type { User } from "../types/type";
 
 interface AgendaProps {
-  userData: UserData;
+  user: User;
 }
 
-const Agenda = ({ userData }: AgendaProps) => {
+const Agenda = ({ user }: AgendaProps) => {
+  console.log(user);
+
   const [modalData, setModalData] = useState<{
     date: Date | null;
     hour: string | null;
@@ -101,8 +103,8 @@ const Agenda = ({ userData }: AgendaProps) => {
 
       {showModal && modalData.date && modalData.hour && (
         <AgendaItemModal
-          isLogged={userData.status}
-          userData={userData.data}
+          isLogged={user.authenticated ? true : false}
+          user={user ? { name: user.name, email: user.email } : null}
           date={modalData.date}
           hour={modalData.hour}
           onClose={() => setShowModal(false)}

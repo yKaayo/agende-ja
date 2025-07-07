@@ -76,9 +76,13 @@ class Agenda {
     const { id } = req.params;
 
     try {
-      this.agendaItem = await AgendaModel.findOneAndUpdate(id, this.body, {
-        new: true,
-      });
+      this.agendaItem = await AgendaModel.findOneAndUpdate(
+        { _id: id },
+        this.body,
+        {
+          new: true,
+        }
+      );
 
       if (!this.agendaItem) {
         return rep.status(404).send({ error: "Horário não encontrado!" });

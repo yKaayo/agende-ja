@@ -14,10 +14,23 @@ const App = () => {
     status: false,
     data: null,
   });
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    authenticated: false,
+  });
 
   const verifyUserLogged = async () => {
     try {
       const userStatus = await verifyLogged();
+
+      setUser((prev) => ({
+        ...prev,
+        name: userStatus.user?.name || "",
+        email: userStatus.user?.email || "",
+        authenticated: userStatus.authenticated || false,
+      }));
+
       return userStatus;
     } catch (err) {
       console.error("Erro ao verificar login:", err);
@@ -60,7 +73,7 @@ const App = () => {
       {userData.data && (
         <MySchedule userSchedule={userData.data} isLogged={userData.status} />
       )}
-      <Agenda userData={userData} />
+      <Agenda user={user} />
     </>
   );
 };

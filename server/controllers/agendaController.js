@@ -1,5 +1,5 @@
 // Model
-import Agenda, { AgendaModel } from "../models/agendaModel.js";
+import Agenda, { AgendaModel } from "../models/AgendaModel.js";
 
 export const schedule = (req, rep) => {
   const today = new Date();
@@ -70,12 +70,12 @@ export const deleteScheduleTime = async (req, rep) => {
   }
 
   try {
-    const agenda = await AgendaModel.findOneAndDelete(id);
+    const agenda = await AgendaModel.findOneAndDelete({ _id: id });
 
     if (!agenda) {
       return rep.status(400).send({
-      message: "Horário não encontrado!",
-    });
+        message: "Horário não encontrado!",
+      });
     }
 
     return rep.status(200).send({
