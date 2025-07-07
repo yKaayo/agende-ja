@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
-import { registerUser } from "../lib/api.js";
+
+// API
+import { registerUser } from "../lib/UserApi.js";
 
 // Boostrap
 import { Modal } from "bootstrap";

@@ -1,5 +1,5 @@
 // Model
-import Agenda from "../models/agendaModel.js";
+import Agenda, { AgendaModel } from "../models/agendaModel.js";
 
 export const schedule = (req, rep) => {
   const today = new Date();
@@ -41,7 +41,11 @@ export const userAgenda = async (req, rep) => {
   }
 
   try {
-    const agendaItems = await Agenda.find(email).sort({ date: 1, time: 1 });
+    const agendaItems = await AgendaModel.find({ email: email }).sort({
+      date: 1,
+      time: 1,
+    });
+
     return rep.status(200).send(agendaItems);
   } catch (error) {
     return rep.status(500).send({ error: "Erro ao buscar agenda do usuário." });
@@ -51,4 +55,33 @@ export const userAgenda = async (req, rep) => {
 export const scheduleTime = async (req, rep) => {
   const schedule = new Agenda(req.body);
   return await schedule.register(rep);
+};
+
+export const editScheduleTime = async (req, rep) => {
+  const schedule = new Agenda(req.body);
+  return await schedule.edit(req, rep);
+};
+
+export const deleteScheduleTime = async (req, rep) => {
+  const { id } = req.params;
+
+  if (!id || typeof id !== "string") {
+    return rep.status(400).send({ error: "Agendamento não informado!" });
+  }
+
+  try {
+    const agenda = await AgendaModel.findOneAndDelete(id);
+
+    if (!agenda) {
+      return rep.status(400).send({
+      message: "Horário não encontrado!",
+    });
+    }
+
+    return rep.status(200).send({
+      message: "Horário cancelado com sucesso!",
+    });
+  } catch (error) {
+    return rep.status(500).send({ error: "Erro ao buscar agenda do usuário." });
+  }
 };

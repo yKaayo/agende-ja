@@ -1,52 +1,20 @@
-import { useEffect, useState } from "react";
-
 // Layout
 import Login from "./Login";
 import Register from "./Register";
 import Logout from "./Logout";
 
+// Type
+import type { UserData } from "../types/type";
+
 // Image
 import banner from "../assets/images/banner.webp";
 
-// API
-import { verifyLogged, userAgenda } from "../lib/api";
+interface BannerProps {
+  userData: UserData;
+}
 
-const Banner = () => {
-  const [isLogged, setIsLogged] = useState(false);
-
-  const verifyUserLogged = async () => {
-    try {
-      const userStatus = await verifyLogged();
-      return userStatus;
-    } catch (err) {
-      console.error("Erro ao verificar login:", err);
-      return false;
-    }
-  };
-
-  const getUserData = async (email: string) => {
-    try {
-      const userData = await userAgenda(email);
-
-      if (userData) console.log(userData);
-    } catch (err) {
-      console.error("Erro ao obter dados do usuário:", err);
-    }
-  };
-
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      const status = await verifyUserLogged();
-
-      if (status.authenticated) {
-        await getUserData(status.user.email);
-      }
-
-      setIsLogged(status.authenticated);
-    };
-
-    checkAuthStatus();
-  }, []);
+const Banner = ({ userData }: BannerProps) => {
+  const isLogged = userData.status;
 
   return (
     <>

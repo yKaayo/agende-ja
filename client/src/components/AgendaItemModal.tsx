@@ -1,42 +1,29 @@
-import { useEffect, useState } from "react";
-
 // Type
 import type { Schedule } from "../types/type";
 
 // API
-import { verifyLogged, createUserSchedule } from "../lib/api";
+import { createUserSchedule } from "../lib/AgendaApi";
 
 interface AgendaItemModalProps {
+  isLogged: boolean;
+  userData: Schedule | null;
   date: Date;
   hour: string;
   onClose: () => void;
 }
 
-const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
-  const [isLogged, setIsLogged] = useState(false);
-  const [userData, setUserData] = useState({
-    name: "",
-    email: "",
-  });
-
+const AgendaItemModal = ({
+  isLogged,
+  userData,
+  date,
+  hour,
+  onClose,
+}: AgendaItemModalProps) => {
   const formatDate = date.toLocaleDateString("pt-BR", {
     weekday: "short",
     day: "2-digit",
     month: "2-digit",
   });
-
-  const verifyUserLogged = async () => {
-    try {
-      const userStatus = await verifyLogged();
-
-      if (userStatus.authenticated) setUserData(userStatus.user);
-
-      return userStatus.authenticated;
-    } catch (err) {
-      console.error("Erro ao verificar login:", err);
-      return false;
-    }
-  };
 
   const handleCta = async () => {
     if (isLogged && userData) {
@@ -54,15 +41,6 @@ const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
       alert("Usuário não está logado.");
     }
   };
-
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      const status = await verifyUserLogged();
-      setIsLogged(status);
-    };
-
-    checkAuthStatus();
-  }, []);
 
   return (
     <div className="modal show d-block" tabIndex={-1} aria-hidden="true">

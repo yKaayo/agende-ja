@@ -65,6 +65,32 @@ class Agenda {
       throw new Error("Erro ao marcar horário!", 500);
     }
   }
+
+  async edit(req, rep) {
+    this.cleanUp();
+
+    const validateAgendaItem = this.validate(rep);
+    if (validateAgendaItem !== true)
+      return rep.status(400).send({ error: validateAgendaItem });
+
+    const { id } = req.params;
+
+    try {
+      this.agendaItem = await AgendaModel.findOneAndUpdate(id, this.body, {
+        new: true,
+      });
+
+      if (!this.agendaItem) {
+        return rep.status(404).send({ error: "Horário não encontrado!" });
+      }
+
+      return rep.status(200).send({
+        message: `Horário editado para o dia ${this.body.date} às ${this.body.time} horas com sucesso!`,
+      });
+    } catch (err) {
+      throw new Error("Erro ao editar horário!", 500);
+    }
+  }
 }
 
 export default Agenda;

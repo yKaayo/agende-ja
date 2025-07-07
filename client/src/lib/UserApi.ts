@@ -1,8 +1,5 @@
 import axios from "axios";
 
-// Type
-import type { Schedule } from "../types/type";
-
 interface RegisterData {
   name: string;
   email: string;
@@ -13,7 +10,6 @@ export type LoginData = Pick<RegisterData, "email" | "password">;
 
 const url = "http://localhost:3000";
 
-// User
 export const verifyLogged = async () => {
   try {
     const res = await axios.get(`${url}/autenticar`, { withCredentials: true });
@@ -28,7 +24,9 @@ export const verifyLogged = async () => {
 
 export const registerUser = async (data: RegisterData) => {
   try {
-    const res = await axios.post(`${url}/autenticar/cadastrar`, data);
+    const res = await axios.post(`${url}/autenticar/cadastrar`, data, {
+      withCredentials: true,
+    });
     return res.data;
   } catch (err) {
     console.error("Erro ao cadastrar:", err);
@@ -57,33 +55,6 @@ export const logoutUser = async () => {
     return res.data;
   } catch (err) {
     console.error("Erro ao sair:", err);
-    return err?.response?.data;
-  }
-};
-
-// Agenda
-export const userAgenda = async (email: string) => {
-  try {
-    const res = await axios.get(`${url}/agenda/${email}`);
-
-    return res.data;
-  } catch (err) {
-    console.error("Erro ao obter agenda do usuário:", err);
-
-    return null;
-  }
-};
-
-export const createUserSchedule = async (user: Schedule) => {
-  try {
-    console.log(user);
-    
-    const res = await axios.post(`${url}/agenda/scheduleTime`, user);
-
-    return res.data;
-  } catch (err) {
-    console.error("Erro ao marcar horário:", err);
-
     return err?.response?.data;
   }
 };

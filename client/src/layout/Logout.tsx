@@ -1,5 +1,5 @@
 // API
-import { logoutUser } from "../lib/api";
+import { logoutUser } from "../lib/UserApi";
 
 const Logout = () => {
   const handleLogout = async () => {

@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
-import { loginUser } from "../lib/api";
+
+// API
+import { loginUser } from "../lib/UserApi";
 
 // Boostrap
 import { Modal } from "bootstrap";
