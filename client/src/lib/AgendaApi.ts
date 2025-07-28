@@ -5,6 +5,16 @@ import type { Schedule } from "../types/type";
 
 const url = "http://localhost:3000";
 
+export const getAllSchedules = async () => {
+  try {
+    const res = await axios.get(`${url}/agenda`);
+  } catch (err) {
+    console.error("Erro ao obter agenda do usuário:", err);
+
+    return null;
+  }
+};
+
 export const userAgenda = async (email: string) => {
   try {
     const res = await axios.get(`${url}/agenda/${email}`, {
@@ -12,9 +22,7 @@ export const userAgenda = async (email: string) => {
     });
 
     const filteredData = res.data.map((item: Schedule) => ({
-      _id: item._id,
-      name: item.name,
-      email: item.email,
+      id: item._id,
       date: item.date,
       time: item.time,
     }));
@@ -29,8 +37,6 @@ export const userAgenda = async (email: string) => {
 
 export const createUserSchedule = async (user: Schedule) => {
   try {
-    console.log(user);
-
     const res = await axios.post(`${url}/agenda/scheduleTime`, user, {
       withCredentials: true,
     });

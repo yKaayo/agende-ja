@@ -31,7 +31,6 @@ const Register = () => {
     try {
       const { passwordConfirm, ...userData } = formData;
       const data = await registerUser(userData);
-      console.log(data);
 
       if (data?.error) return alert(data?.error);
       if (data?.message) alert(data?.message);

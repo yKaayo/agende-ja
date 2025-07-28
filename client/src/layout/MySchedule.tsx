@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { useState } from "react";
 
 // Icons
@@ -11,12 +12,9 @@ import type { Schedule } from "../types/type";
 import EditScheduleModal from "../components/EditScheduleModal";
 import DeleteScheduleModal from "../components/DeleteScheduleModal";
 
-interface MyScheduleProps {
-  userSchedule: Schedule[];
-  isLogged: boolean;
-}
+const MySchedule = () => {
+  const user = useSelector((state) => state.user);
 
-const MySchedule = ({ userSchedule, isLogged }: MyScheduleProps) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -49,11 +47,11 @@ const MySchedule = ({ userSchedule, isLogged }: MyScheduleProps) => {
   return (
     <>
       <div className="container d-flex justify-content-between">
-        {userSchedule.map((schedule: Schedule) => (
+        {user.data.map((schedule: Schedule) => (
           <div key={`${schedule.date}-${schedule.time}`}>
             <div className="">
-              <p>{`Nome: ${schedule.name}`}</p>
-              <p>{`Email: ${schedule.email}`}</p>
+              <p>{`Nome: ${user.name}`}</p>
+              <p>{`Email: ${user.email}`}</p>
               <p>{`Data: ${schedule.date}`}</p>
               <p>{`Hora: ${schedule.time}`}</p>
             </div>
@@ -72,7 +70,6 @@ const MySchedule = ({ userSchedule, isLogged }: MyScheduleProps) => {
 
       {showEditModal && (
         <EditScheduleModal
-          isLogged={isLogged}
           userData={editSelectSchedule}
           onClose={() => setShowEditModal(false)}
         />
@@ -80,7 +77,6 @@ const MySchedule = ({ userSchedule, isLogged }: MyScheduleProps) => {
 
       {showDeleteModal && (
         <DeleteScheduleModal
-          isLogged={isLogged}
           id={selectId}
           onClose={() => setShowDeleteModal(false)}
         />

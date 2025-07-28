@@ -1,12 +1,17 @@
+import { useDispatch } from "react-redux";
 import { useRef, useState } from "react";
 
 // API
 import { loginUser } from "../lib/UserApi";
 
+// Slice
+import { setUser } from "../store/slices/userSlice";
+
 // Boostrap
 import { Modal } from "bootstrap";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -27,7 +32,14 @@ const Login = () => {
       const data = await loginUser(formData);
 
       if (data?.error) return alert(data?.error);
-      if (data?.message) alert(data?.message);
+      if (data?.message) {
+        dispatch(
+          setUser({
+            authenticated: true,
+          })
+        );
+        alert(data?.message);
+      }
 
       if (modalRef?.current) {
         const modal = modalRef.current;

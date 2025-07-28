@@ -24,13 +24,13 @@ mongoose
   .then(() => console.log("Mongoose conectado"))
   .catch((err) => console.error("Erro ao conectar com o MongoDB:", err));
 
-await fastify.register(cors, {
+fastify.register(cors, {
   origin: "http://localhost:8080",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 });
-await fastify.register(fastifyCookie, {
+fastify.register(fastifyCookie, {
   secret: process.env.COOKIE_SECRET,
   parseOptions: {
     httpOnly: true,
@@ -38,7 +38,7 @@ await fastify.register(fastifyCookie, {
     sameSite: "lax",
   },
 });
-await fastify.register(fastifySession, {
+fastify.register(fastifySession, {
   rolling: true,
   cookieName: "sessionId",
   secret: process.env.SESSION_SECRET,

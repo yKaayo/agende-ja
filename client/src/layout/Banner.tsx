@@ -1,20 +1,15 @@
+import { useSelector } from "react-redux";
+
 // Layout
 import Login from "./Login";
 import Register from "./Register";
 import Logout from "./Logout";
 
-// Type
-import type { UserData } from "../types/type";
-
 // Image
 import banner from "../assets/images/banner.webp";
 
-interface BannerProps {
-  userData: UserData;
-}
-
-const Banner = ({ userData }: BannerProps) => {
-  const isLogged = userData.status;
+const Banner = () => {
+  const user = useSelector((state) => state.user);
 
   return (
     <>
@@ -23,7 +18,7 @@ const Banner = ({ userData }: BannerProps) => {
 
         <div className="position-absolute top-0 w-100">
           <div className="container d-flex justify-content-end gap-3 mt-4">
-            {isLogged ? (
+            {user?.authenticated ? (
               <Logout />
             ) : (
               <>

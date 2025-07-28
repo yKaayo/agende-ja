@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { useState } from "react";
 
 // Type
@@ -7,16 +8,13 @@ import type { Schedule } from "../types/type";
 import { editUserSchedule } from "../lib/AgendaApi";
 
 interface EditScheduleModalProps {
-  isLogged: boolean;
   userData: Schedule;
   onClose: () => void;
 }
 
-const EditScheduleModal = ({
-  isLogged,
-  userData,
-  onClose,
-}: EditScheduleModalProps) => {
+const EditScheduleModal = ({ userData, onClose }: EditScheduleModalProps) => {
+  const user = useSelector((state) => state.user);
+
   const formatDateToInput = (date: string) => {
     const [day, month, year] = date.split("/");
     return `${year}-${month}-${day}`;
@@ -104,7 +102,10 @@ const EditScheduleModal = ({
               </div>
             </div>
 
-            <button className="btn btn-primary mt-4" disabled={!isLogged}>
+            <button
+              className="btn btn-primary mt-4"
+              disabled={!user.authenticated}
+            >
               Salvar
             </button>
           </form>

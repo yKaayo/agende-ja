@@ -35,7 +35,9 @@ class Login {
       if (!this.user)
         return rep.status(404).send({ error: "Usuário não existe!" });
     } catch (err) {
-      throw new Error("Erro ao buscar dados do usuário!", 400);
+      return rep
+        .status(400)
+        .send({ error: "Erro ao buscar dados do usuário!" });
     }
 
     if (this.body.password.length < 1 || this.body.password.length > 8)
@@ -53,7 +55,7 @@ class Login {
           error: "Senha Incorreta!",
         });
     } catch (err) {
-      throw new Error("Erro ao acessar a conta!", 500);
+      return rep.status(500).send({ error: "Erro ao acessar a conta!" });
     }
 
     return true;
@@ -64,16 +66,15 @@ class Login {
 
     try {
       const validateUser = await this.validate(rep);
-      if (validateUser !== true)
-        return rep.status(400).send({ error: validateUser });
+      if (!validateUser) return;
     } catch (err) {
       throw err;
     }
 
     req.session.userId = this.user._id.toString();
-    req.session.userEmail = this.user.email;
+    const { _id, name, email } = this.user;
 
-    return rep.status(201).send({ message: "Você entrou!" });
+    return rep.status(201).send({ _id, name, email });
   }
 }
 

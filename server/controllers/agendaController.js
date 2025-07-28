@@ -46,7 +46,13 @@ export const userAgenda = async (req, rep) => {
       time: 1,
     });
 
-    return rep.status(200).send(agendaItems);
+    const userAgenda = [];
+    agendaItems.forEach((item) => {
+      const { _id, date, time } = item;
+      userAgenda.push({ _id, date, time });
+    });
+
+    return rep.status(200).send(userAgenda);
   } catch (error) {
     return rep.status(500).send({ error: "Erro ao buscar agenda do usuário." });
   }

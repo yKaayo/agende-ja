@@ -1,17 +1,16 @@
+import { useSelector } from "react-redux";
+
 // API
 import { deleteUserSchedule } from "../lib/AgendaApi";
 
 interface DeleteScheduleModal {
-  isLogged: boolean;
   id: string;
   onClose: () => void;
 }
 
-const DeleteScheduleModal = ({
-  isLogged,
-  id,
-  onClose,
-}: DeleteScheduleModal) => {
+const DeleteScheduleModal = ({ id, onClose }: DeleteScheduleModal) => {
+  const user = useSelector((state) => state.user);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -36,7 +35,10 @@ const DeleteScheduleModal = ({
             <h3>Tem certeza que deseja cancelar seu horário?</h3>
 
             <div className="d-flex align-items-center">
-              <button className="btn btn-danger mt-4" disabled={!isLogged}>
+              <button
+                className="btn btn-danger mt-4"
+                disabled={!user.authenticated}
+              >
                 Deletar
               </button>
               <button

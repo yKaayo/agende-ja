@@ -1,26 +1,20 @@
+import { useSelector } from "react-redux";
+
 // Type
-import type { User, Schedule } from "../types/type";
+import type { Schedule } from "../types/type";
 
 // API
 import { createUserSchedule } from "../lib/AgendaApi";
 
 interface AgendaItemModalProps {
-  isLogged: boolean;
-  user: User | null;
   date: Date;
   hour: string;
   onClose: () => void;
 }
 
-const AgendaItemModal = ({
-  isLogged,
-  user,
-  date,
-  hour,
-  onClose,
-}: AgendaItemModalProps) => {
+const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
+  const user = useSelector((state) => state.user);
 
-  
   const formatDate = date.toLocaleDateString("pt-BR", {
     weekday: "short",
     day: "2-digit",
@@ -28,16 +22,13 @@ const AgendaItemModal = ({
   });
 
   const handleCta = async () => {
-    if (isLogged && user) {
+    if (user.authenticated && user) {
       const scheduleData: Schedule = {
         name: user.name,
         email: user.email,
         date: date.toLocaleDateString("pt-BR"),
         time: hour,
       };
-
-      console.log(scheduleData);
-      
 
       const res = await createUserSchedule(scheduleData);
       alert(res.message);
@@ -65,7 +56,7 @@ const AgendaItemModal = ({
 
             <button
               className="btn btn-primary"
-              disabled={!isLogged}
+              disabled={!user.authenticated}
               onClick={handleCta}
             >
               Confirmar

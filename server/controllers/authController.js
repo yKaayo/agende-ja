@@ -5,6 +5,7 @@ import { RegisterModel } from "../models/RegisterModel.js";
 
 export const verifyLogged = async (req, rep) => {
   const user = await RegisterModel.findById(req.session.userId);
+
   if (!user) {
     req.session.destroy();
     return rep.status(401).send({ error: "Usuário não encontrado" });
