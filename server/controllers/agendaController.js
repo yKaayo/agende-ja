@@ -1,36 +1,80 @@
 // Model
 import Agenda, { AgendaModel } from "../models/AgendaModel.js";
 
-export const schedule = (req, rep) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+export const generateSchedule = async (req, rep) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  const days = [];
+    const schedules = [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+    ];
 
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    const formattedDate = date.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
+    const days = [];
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+
+      const formattedDate = date.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+
+      days.push(formattedDate);
+    }
+
+    const agendaItems = await AgendaModel.find();
+
+    const available = days.map((day) => {
+      const schedulesOfTheDay = agendaItems
+        .filter((item) => item.date === day)
+        .map((item) => item.time);
+
+      const available = schedules.filter(
+        (hora) => !schedulesOfTheDay.includes(hora)
+      );
+
+      return {
+        date: day,
+        availableTimes: available,
+      };
     });
-    days.push(formattedDate);
+
+    return rep.status(200).send({ schedule: available });
+  } catch (error) {
+    console.error(error);
+    return rep.status(500).send({ error: "Erro ao gerar agenda." });
   }
+};
 
-  const schedules = [
-    "08:00",
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-  ];
+export const allSchedules = async (req, rep) => {
+  try {
+    const agendaItems = await AgendaModel.find().sort({
+      date: 1,
+      time: 1,
+    });
 
-  return rep.status(200).send({ days, schedules });
+    const userAgenda = [];
+    agendaItems.forEach((item) => {
+      const { _id, date, time } = item;
+      userAgenda.push({ _id, date, time });
+    });
+
+    return rep.status(200).send(userAgenda);
+  } catch (error) {
+    return rep.status(500).send({ error: "Erro ao buscar agenda do usuário." });
+  }
 };
 
 export const userAgenda = async (req, rep) => {

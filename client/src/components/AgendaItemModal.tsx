@@ -15,18 +15,12 @@ interface AgendaItemModalProps {
 const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
   const user = useSelector((state) => state.user);
 
-  const formatDate = date.toLocaleDateString("pt-BR", {
-    weekday: "short",
-    day: "2-digit",
-    month: "2-digit",
-  });
-
   const handleCta = async () => {
     if (user.authenticated && user) {
       const scheduleData: Schedule = {
         name: user.name,
         email: user.email,
-        date: date.toLocaleDateString("pt-BR"),
+        date: date,
         time: hour,
       };
 
@@ -51,7 +45,7 @@ const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
             ></button>
           </div>
           <div className="modal-body">
-            <p>{formatDate}</p>
+            <p>{date}</p>
             <p>{hour}</p>
 
             <button

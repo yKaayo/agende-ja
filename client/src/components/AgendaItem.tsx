@@ -5,16 +5,9 @@ interface AgendaItemsProps {
 }
 
 const AgendaItem = ({ date, schedules, onHourClick }: AgendaItemsProps) => {
-  const formatDate = (data: Date) =>
-    data.toLocaleDateString("pt-BR", {
-      weekday: "short",
-      day: "2-digit",
-      month: "2-digit",
-    });
-
   return (
     <div className="card my-3">
-      <div className="card-header fw-bold">{formatDate(date)}</div>
+      <div className="card-header fw-bold">{date}</div>
       <div className="card-body d-flex justify-content-between flex-wrap gap-2">
         {schedules.map((hour: string) => (
           <button

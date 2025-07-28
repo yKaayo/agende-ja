@@ -5,9 +5,21 @@ import type { Schedule } from "../types/type";
 
 const url = "http://localhost:3000";
 
+export const getGenerateSchedules = async () => {
+  try {
+    const res = await axios.get(`${url}/agenda/`);
+    return res.data;
+  } catch (err) {
+    console.error("Erro ao obter agenda do usuário:", err);
+
+    return null;
+  }
+};
+
 export const getAllSchedules = async () => {
   try {
-    const res = await axios.get(`${url}/agenda`);
+    const res = await axios.get(`${url}/agenda/todos`);
+    return res.data;
   } catch (err) {
     console.error("Erro ao obter agenda do usuário:", err);
 
