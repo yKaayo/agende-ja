@@ -1,7 +1,10 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 // API
-import { deleteUserSchedule } from "../lib/AgendaApi";
+import { deleteUserSchedule } from "../services/AgendaApi";
+
+// Slice Thunk
+import { getAllAgenda } from "../store/slices/scheduleSlice";
 
 interface DeleteScheduleModal {
   id: string;
@@ -10,11 +13,14 @@ interface DeleteScheduleModal {
 
 const DeleteScheduleModal = ({ id, onClose }: DeleteScheduleModal) => {
   const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const res = await deleteUserSchedule(id);
+
+    dispatch(getAllAgenda());
     alert(res.message);
     onClose();
   };

@@ -2,10 +2,10 @@ import { useDispatch } from "react-redux";
 import { useRef, useState } from "react";
 
 // API
-import { loginUser } from "../lib/UserApi";
+import { loginUser } from "../services/UserApi";
 
-// Slice
-import { setUser } from "../store/slices/userSlice";
+// Slice Thunk
+import { fetchUserAndAgenda } from "../store/slices/userSlice";
 
 // Boostrap
 import { Modal } from "bootstrap";
@@ -33,18 +33,13 @@ const Login = () => {
 
       if (data?.error) return alert(data?.error);
       if (data?.message) {
-        dispatch(
-          setUser({
-            authenticated: true,
-          })
-        );
+        dispatch(fetchUserAndAgenda());
         alert(data?.message);
       }
 
       if (modalRef?.current) {
         const modal = modalRef.current;
-        const modalInstance = Modal.getInstance(modal);
-
+        const modalInstance = Modal.getInstance(modal) || new Modal(modal);
         modalInstance.hide();
       }
 
@@ -91,6 +86,7 @@ const Login = () => {
                   name="email"
                   placeholder="email@email.com"
                   onChange={handleChange}
+                  required
                 />
               </div>
 
@@ -100,13 +96,14 @@ const Login = () => {
                 </label>
                 <input
                   type={showPassword ? "text" : "password"}
-                  max={8}
-                  min={1}
+                  maxLength={8}
+                  minLength={1}
                   className="form-control"
                   id="loginPassword"
                   name="password"
                   placeholder="senha123"
                   onChange={handleChange}
+                  required
                 />
               </div>
 

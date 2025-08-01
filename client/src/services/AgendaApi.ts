@@ -1,14 +1,15 @@
 import axios from "axios";
 
 // Type
-import type { Schedule } from "../types/type";
+import type { Schedule, UserData, UserSchedule } from "../types/type";
 
 const url = "http://localhost:3000";
 
 export const getGenerateSchedules = async () => {
   try {
-    const res = await axios.get(`${url}/agenda/`);
-    return res.data;
+    const { data } = await axios.get(`${url}/agenda/`);
+    const schedules: UserData[] = data.schedule;
+    return schedules;
   } catch (err) {
     console.error("Erro ao obter agenda do usuário:", err);
 
@@ -29,11 +30,12 @@ export const getAllSchedules = async () => {
 
 export const userAgenda = async (email: string) => {
   try {
-    const res = await axios.get(`${url}/agenda/${email}`, {
+    const { data } = await axios.get(`${url}/agenda/${email}`, {
       withCredentials: true,
     });
+    console.log(data);
 
-    const filteredData = res.data.map((item: Schedule) => ({
+    const filteredData: UserSchedule[] = data.map((item: UserSchedule) => ({
       id: item._id,
       date: item.date,
       time: item.time,
@@ -49,11 +51,11 @@ export const userAgenda = async (email: string) => {
 
 export const createUserSchedule = async (user: Schedule) => {
   try {
-    const res = await axios.post(`${url}/agenda/scheduleTime`, user, {
+    const { data } = await axios.post(`${url}/agenda/scheduleTime`, user, {
       withCredentials: true,
     });
 
-    return res.data;
+    return data;
   } catch (err) {
     console.error("Erro ao marcar horário:", err);
 

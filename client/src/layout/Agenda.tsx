@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import AgendaItem from "../components/AgendaItem";
 import AgendaItemModal from "../components/AgendaItemModal";
 
-// Icon
-import { getGenerateSchedules } from "../lib/AgendaApi";
+// Slice Thunk
+import { getAllAgenda } from "../store/slices/scheduleSlice.js";
 
-// Slice
-import { setSchedules } from "../store/slices/scheduleSlice";
+// Types
+import type { Schedule } from "../types/type.js";
 
 const Agenda = () => {
   const [modalData, setModalData] = useState<{
@@ -18,32 +18,32 @@ const Agenda = () => {
   }>({ date: null, hour: null });
   const [showModal, setShowModal] = useState(false);
 
-  const schedules = useSelector((state) => state.schedules);
+  const { loading, schedules } = useSelector((state) => state.schedules);
+  console.log(schedules);
+  
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getSchedules = async () => {
-      const data = await getGenerateSchedules();
-      dispatch(setSchedules(data.schedule));
-    };
-
-    getSchedules();
+    dispatch(getAllAgenda());
   }, [dispatch]);
-
   return (
     <>
-      <section className="container mb-3">
-        {schedules.map((date, i) => (
-          <AgendaItem
-            key={i}
-            date={date.date}
-            schedules={date.availableTimes}
-            onHourClick={(hour) => {
-              setModalData({ date: date.date, hour });
-              setShowModal(true);
-            }}
-          />
-        ))}
+      <section className="container my-5">
+        {!loading && schedules && schedules.length > 0 ? (
+          schedules.map((date: Schedule, i: number) => (
+            <AgendaItem
+              key={i}
+              date={date.date}
+              schedules={date.availableTimes}
+              onHourClick={(hour) => {
+                setModalData({ date: date.date, hour });
+                setShowModal(true);
+              }}
+            />
+          ))
+        ) : (
+          <h2 className="text-center">Não horários disponíveis no momento</h2>
+        )}
       </section>
 
       {showModal && modalData.date && modalData.hour && (

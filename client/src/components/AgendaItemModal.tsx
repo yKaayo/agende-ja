@@ -1,10 +1,11 @@
-import { useSelector } from "react-redux";
-
-// Type
-import type { Schedule } from "../types/type";
+import { useDispatch, useSelector } from "react-redux";
 
 // API
-import { createUserSchedule } from "../lib/AgendaApi";
+import { createUserSchedule } from "../services/AgendaApi";
+
+// Slice Thunk
+import { fetchUserAndAgenda } from "../store/slices/userSlice.js";
+import { getAllAgenda } from "../store/slices/scheduleSlice.js";
 
 interface AgendaItemModalProps {
   date: Date;
@@ -13,11 +14,12 @@ interface AgendaItemModalProps {
 }
 
 const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
 
   const handleCta = async () => {
     if (user.authenticated && user) {
-      const scheduleData: Schedule = {
+      const scheduleData = {
         name: user.name,
         email: user.email,
         date: date,
@@ -25,6 +27,9 @@ const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
       };
 
       const res = await createUserSchedule(scheduleData);
+
+      dispatch(fetchUserAndAgenda());
+      dispatch(getAllAgenda());
       alert(res.message);
       onClose();
     } else {
@@ -45,7 +50,7 @@ const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
             ></button>
           </div>
           <div className="modal-body">
-            <p>{date}</p>
+            <p>{date.toString()}</p>
             <p>{hour}</p>
 
             <button

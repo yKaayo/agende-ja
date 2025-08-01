@@ -47,7 +47,7 @@ const MySchedule = () => {
   return (
     <>
       <div className="container d-flex justify-content-between">
-        {user.data.map((schedule: Schedule) => (
+        {user.data.map((schedule) => (
           <div key={`${schedule.date}-${schedule.time}`}>
             <div className="">
               <p>{`Nome: ${user.name}`}</p>
@@ -59,9 +59,7 @@ const MySchedule = () => {
             <button onClick={() => handleEdit(schedule)}>
               <img src={pencilIcon} alt="Editar" />
             </button>
-            <button
-              onClick={() => handleDelete(schedule._id ? schedule._id : "")}
-            >
+            <button onClick={() => handleDelete(schedule.id)}>
               <img src={trashIcon} alt="Deletar" />
             </button>
           </div>

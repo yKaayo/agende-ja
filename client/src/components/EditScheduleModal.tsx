@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { Schedule } from "../types/type";
 
 // API
-import { editUserSchedule } from "../lib/AgendaApi";
+import { editUserSchedule } from "../services/AgendaApi";
 
 interface EditScheduleModalProps {
   userData: Schedule;

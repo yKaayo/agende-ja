@@ -4,13 +4,18 @@ export type User = {
   authenticated?: boolean;
 };
 
-export type Schedule = User & {
-  _id?: string;
-  date: string;
-  time: string;
+export type Schedule = {
+  availableTimes: string[];
+  date: Date;
 };
 
 export type UserData = {
   status: boolean;
   data: Schedule[] | null;
+};
+
+export type UserSchedule = {
+  _id: string;
+  time: string;
+  date: Date;
 };

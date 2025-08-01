@@ -58,6 +58,10 @@ class Agenda {
 
     try {
       this.agendaItem = await AgendaModel.create(this.body);
+
+      console.log(await AgendaModel.find());
+      
+
       rep.status(201).send({
         message: `Horário marcado para o dia ${this.body.date} ás ${this.body.time} horas com sucesso!`,
       });

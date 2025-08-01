@@ -1,12 +1,18 @@
+import { useDispatch } from "react-redux";
 // API
-import { logoutUser } from "../lib/UserApi";
+import { logoutUser } from "../services/UserApi";
+import { logout } from "../store/slices/userSlice";
 
 const Logout = () => {
+  const dispatch = useDispatch();
+
   const handleLogout = async () => {
     const res = await logoutUser();
 
     if (res?.error) return alert(res?.error);
     if (res?.message) alert(res?.message);
+
+    dispatch(logout());
   };
 
   return (

@@ -4,7 +4,6 @@ import Agenda, { AgendaModel } from "../models/AgendaModel.js";
 export const generateSchedule = async (req, rep) => {
   try {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
 
     const schedules = [
       "08:00",
@@ -19,39 +18,70 @@ export const generateSchedule = async (req, rep) => {
       "17:00",
     ];
 
-    const days = [];
+    const getYesterday = () => {
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      return yesterday.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    };
 
+    const days = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
+      days.push(date);
+    }
 
-      const formattedDate = date.toLocaleDateString("pt-BR", {
+    const agendaItems = await AgendaModel.find();
+
+    const formatDateToISO = (ptBR) => {
+      const [day, month, year] = ptBR.split("/");
+      return new Date(`${year}-${month}-${day}`);
+    };
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const lateAgendaItems = agendaItems.filter((item) => {
+      const itemDate = formatDateToISO(item.date);
+      return itemDate <= yesterday;
+    });
+
+    const deleteAgendaItem = async (id) => {
+      await AgendaModel.deleteOne({ _id: id });
+    };
+
+    lateAgendaItems.map((item) => deleteAgendaItem(item._id));
+
+    const available = days.map((day) => {
+      const formattedDay = day.toLocaleDateString("pt-BR", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
       });
 
-      days.push(formattedDate);
-    }
-
-    const agendaItems = await AgendaModel.find();
-
-    const available = days.map((day) => {
       const schedulesOfTheDay = agendaItems
-        .filter((item) => item.date === day)
+        .filter((item) => {
+          return item.date === formattedDay;
+        })
         .map((item) => item.time);
 
-      const available = schedules.filter(
+      const availableTimes = schedules.filter(
         (hora) => !schedulesOfTheDay.includes(hora)
       );
 
       return {
-        date: day,
-        availableTimes: available,
+        date: formattedDay,
+        availableTimes,
       };
     });
 
-    return rep.status(200).send({ schedule: available });
+    return rep.status(200).send({
+      schedule: available,
+    });
   } catch (error) {
     console.error(error);
     return rep.status(500).send({ error: "Erro ao gerar agenda." });
