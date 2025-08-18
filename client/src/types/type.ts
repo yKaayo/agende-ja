@@ -19,3 +19,10 @@ export type UserSchedule = {
   time: string;
   date: Date;
 };
+
+export type UserAgenda = {
+  name: string;
+  date: Date;
+  email: string;
+  time: string;
+};

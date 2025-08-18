@@ -4,10 +4,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getGenerateSchedules } from "../../services/AgendaApi";
 
 // Type
-import type { UserData } from "../../types/type";
+import type { Schedule } from "../../types/type";
 
 interface scheduleSlice {
-  schedules: UserData[];
+  schedules: Schedule[];
   loading: boolean;
   error: string | null;
 }
@@ -17,10 +17,16 @@ export const getAllAgenda = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const schedule = await getGenerateSchedules();
+
       return schedule;
     } catch (err) {
       console.error("Erro no getAllAgenda:", err);
-      return rejectWithValue(err.message);
+
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Erro desconhecido");
     }
   }
 );

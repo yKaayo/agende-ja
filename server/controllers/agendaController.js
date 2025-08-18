@@ -42,12 +42,9 @@ export const generateSchedule = async (req, rep) => {
       return new Date(`${year}-${month}-${day}`);
     };
 
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-
     const lateAgendaItems = agendaItems.filter((item) => {
       const itemDate = formatDateToISO(item.date);
-      return itemDate <= yesterday;
+      return itemDate <= getYesterday();
     });
 
     const deleteAgendaItem = async (id) => {
@@ -144,6 +141,7 @@ export const editScheduleTime = async (req, rep) => {
 
 export const deleteScheduleTime = async (req, rep) => {
   const { id } = req.params;
+  console.log(id);
 
   if (!id || typeof id !== "string") {
     return rep.status(400).send({ error: "Agendamento não informado!" });
@@ -153,15 +151,11 @@ export const deleteScheduleTime = async (req, rep) => {
     const agenda = await AgendaModel.findOneAndDelete({ _id: id });
 
     if (!agenda) {
-      return rep.status(400).send({
-        message: "Horário não encontrado!",
-      });
+      return rep.status(404).send({ error: "Horário não encontrado!" });
     }
 
-    return rep.status(200).send({
-      message: "Horário cancelado com sucesso!",
-    });
+    return rep.status(200).send({ message: "Horário cancelado com sucesso!" });
   } catch (error) {
-    return rep.status(500).send({ error: "Erro ao buscar agenda do usuário." });
+    return rep.status(500).send({ error: "Erro ao cancelar o horário." });
   }
 };

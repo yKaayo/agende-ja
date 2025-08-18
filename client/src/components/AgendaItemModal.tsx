@@ -1,11 +1,11 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../hooks/useStore";
 
 // API
 import { createUserSchedule } from "../services/AgendaApi";
 
 // Slice Thunk
-import { fetchUserAndAgenda } from "../store/slices/userSlice.js";
-import { getAllAgenda } from "../store/slices/scheduleSlice.js";
+import { fetchUserAndAgenda } from "../store/slices/userSlice";
+import { getAllAgenda } from "../store/slices/scheduleSlice";
 
 interface AgendaItemModalProps {
   date: Date;
@@ -14,8 +14,8 @@ interface AgendaItemModalProps {
 }
 
 const AgendaItemModal = ({ date, hour, onClose }: AgendaItemModalProps) => {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user);
 
   const handleCta = async () => {
     if (user.authenticated && user) {

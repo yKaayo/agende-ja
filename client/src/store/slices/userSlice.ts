@@ -60,7 +60,7 @@ const userSlice = createSlice({
       })
       .addCase(fetchUserAndAgenda.rejected, (state, { payload }) => {
         state.loading = false;
-        state.error = payload;
+        state.error = payload as string | null;
       });
   },
 });
